@@ -11,3 +11,8 @@ userRoute.get('/user/:id_user', async (req, res) => {
     
     res.json(await userService.viewUser(req.params.id_user))
 })
+
+userRoute.post('/user', async(req, res) => {
+
+    res.json(await userService.saveUser(req.body))
+})

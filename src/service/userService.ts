@@ -17,4 +17,25 @@ export class UserService {
         return result
         
     }
+
+    async saveUser(user: User) {
+        
+        try {
+
+            const result = await (await connection)
+                .createQueryBuilder()
+                .insert()
+                .into(User)
+                .values([{ name: user.name, email: user.email, password: user.password }])
+                .execute()
+        
+            return result
+
+        } catch (error) {
+            
+            if (error.code == 'ER_DUP_ENTRY') return {error: 'Este e-mail já está cadastrado!'}
+
+            return error
+        }
+    }
 }
