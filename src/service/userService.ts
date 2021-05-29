@@ -19,7 +19,7 @@ export class UserService {
     }
 
     async saveUser(user: User) {
-        
+
         try {
 
             const result = await (await connection)
@@ -27,6 +27,27 @@ export class UserService {
                 .insert()
                 .into(User)
                 .values([{ name: user.name, email: user.email, password: user.password }])
+                .execute()
+        
+            return result
+
+        } catch (error) {
+            
+            if (error.code == 'ER_DUP_ENTRY') return {error: 'Este e-mail já está cadastrado!'}
+
+            return error
+        }
+    }
+
+    async editUser(id_user: string, user: User) {
+
+        try {
+
+            const result = await (await connection)
+                .createQueryBuilder()
+                .update(User)
+                .set({name: user.name, email: user.email, password: user.password})
+                .where('id_user = :id_user', {id_user: id_user})
                 .execute()
         
             return result
