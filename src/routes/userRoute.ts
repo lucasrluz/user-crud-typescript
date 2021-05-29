@@ -7,6 +7,11 @@ export const userRoute = express.Router()
 
 const userService = new UserService()
 
+userRoute.post('/session', async (req, res) => {
+
+    res.json(await userService.login(req.body))
+})
+
 userRoute.get('/user/:id_user', async (req, res) => {
     
     res.json(await userService.viewUser(req.params.id_user))
