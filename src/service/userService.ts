@@ -1,7 +1,42 @@
 import { connection } from "../connection/connection";
 import { User } from "../entity/User";
-
+import * as bcrypt from 'bcrypt'
+import * as jwt from 'jsonwebtoken'
 export class UserService {
+
+    async login(user: User) {
+
+        const result = await (await connection)
+            .createQueryBuilder()
+            .select('user')
+            .from(User, 'user')
+            .where('email = :email', {email: user.email})
+            .getOne()
+        
+        if (result == null) {
+
+            return {error: 'Este usuário não existe!'}
+        } else {
+
+            if (await bcrypt.compare(user.password, result.password)) {
+
+                const token = jwt.sign({id_user: result.id_user}, process.env.APP_SECRET, {expiresIn: '1d'})
+
+                const data = {
+                    id: result.id_user,
+                    name: result.name,
+                    email: result.email,
+                    token
+                }
+
+                return data
+                
+            } else {
+
+                return {error: 'Este usuário não existe!'}
+            }
+        }
+    }
 
     async viewUser(id_user: string) {
 
