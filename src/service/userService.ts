@@ -59,4 +59,16 @@ export class UserService {
             return error
         }
     }
+
+    async deleteUser(id_user: string) {
+
+        const result = await (await connection)
+            .createQueryBuilder()
+            .delete()
+            .from(User)
+            .where('id_user = :id_user', {id_user: id_user})
+            .execute()
+
+        return result
+    }
 }
