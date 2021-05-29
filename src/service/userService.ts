@@ -30,7 +30,7 @@ export class UserService {
                 }
 
                 return data
-                
+
             } else {
 
                 return {error: 'Este usuário não existe!'}
@@ -57,14 +57,16 @@ export class UserService {
 
         try {
 
+            const passwordHash = await bcrypt.hash(user.password, 8)
+
             const result = await (await connection)
                 .createQueryBuilder()
                 .insert()
                 .into(User)
-                .values([{ name: user.name, email: user.email, password: user.password }])
+                .values([{ name: user.name, email: user.email, password: passwordHash }])
                 .execute()
         
-            return result
+            return result.identifiers
 
         } catch (error) {
             
